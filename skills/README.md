@@ -4,6 +4,8 @@ All skills for advanced trading capabilities.
 
 ## Skills Overview
 
+### Core Trading Skills
+
 | # | Skill | File | API | Purpose |
 |---|-------|------|-----|---------|
 | 1 | Sentiment Analyzer | `sentiment-analyzer.js` | DexScreener (free) | Social signals & hype |
@@ -15,6 +17,14 @@ All skills for advanced trading capabilities.
 | 7 | Drawdown Protector | `drawdown-protector.js` | None | Hard stops |
 | 8 | Whale Predictor | `whale-predictor.js` | None | Smart money tracking |
 | 9 | Market Regime | `market-regime.js` | None | Bull/Bear detection |
+
+### Advanced Skills
+
+| # | Skill | File | Purpose |
+|---|-------|------|---------|
+| 10 | Copy Trading | `copy-trading.js` | Follow successful wallets |
+| 11 | Arbitrage Detector | `arbitrage-detector.js` | Find DEX price differences |
+| 12 | ML Predictor | `ml-predictor.js` | AI-powered predictions |
 
 ---
 
@@ -147,6 +157,39 @@ const regime = await regime.analyze();
 
 ---
 
+### 10. Copy Trading
+Follow successful wallets.
+
+```javascript
+const copyTrader = new CopyTrader();
+await copyTrader.addWallet('Whale', 'WalletAddressHere');
+const opportunities = await copyTrader.getOpportunities();
+```
+
+### 11. Arbitrage Detector
+Find price differences between DEXes.
+
+```javascript
+const arbitrage = new ArbitrageDetector();
+const opportunities = await arbitrage.analyzeToken(tokenAddress);
+// Returns: buy/sell DEX, spread percentage, profit potential
+```
+
+### 12. ML Predictor
+AI-powered predictions.
+
+```javascript
+const ml = new MLPredictor();
+const prediction = await ml.predictToken({
+  momentumScore: 85,
+  priceChange24h: 15,
+  liquidity: 5000,
+});
+// Returns: direction, confidence, contributing factors
+```
+
+---
+
 ## Data Storage
 
 ```
@@ -159,7 +202,10 @@ data/
 ├── wallets/
 ├── protector/
 ├── whale-predictor/
-└── regime/
+├── regime/
+├── copytrading/
+├── arbitrage/
+└── ml/
 ```
 
 ---
@@ -172,9 +218,19 @@ node test-skills.js
 
 ---
 
-## Future Enhancements
+## All Skills Complete!
 
-- [ ] ML-based predictions
-- [ ] Twitter/X API for sentiment
-- [ ] Birdeye API for better data
-- [ ] Cross-exchange arbitrage
+| # | Skill | Status |
+|---|-------|--------|
+| 1 | Sentiment Analyzer | ✅ |
+| 2 | Contract Auditor | ✅ |
+| 3 | Chart Patterns | ✅ |
+| 4 | Time Optimizer | ✅ |
+| 5 | Auto-Compounder | ✅ |
+| 6 | Multi-Wallet | ✅ |
+| 7 | Drawdown Protector | ✅ |
+| 8 | Whale Predictor | ✅ |
+| 9 | Market Regime | ✅ |
+| 10 | Copy Trading | ✅ NEW |
+| 11 | Arbitrage Detector | ✅ NEW |
+| 12 | ML Predictor | ✅ NEW |
