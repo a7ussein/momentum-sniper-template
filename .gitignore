@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment files (contain secrets)
+.env
+.env.local
+.env.*.local
+
+# Data directories (generated, contains wallet info)
+data/
+data/*/
+!data/.gitkeep
+
+# Logs
+*.log
+sniper.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Keys and secrets
+*.pem
+*.key
+wallet.json
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Compiled files
+*.compiled
+dist/
+build/

@@ -1,0 +1,26 @@
+{
+  "name": "momentum-sniper",
+  "version": "1.0.0",
+  "description": "High-frequency sniper bot for Pump.fun token launches on Solana",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node src/index.js",
+    "start": "node src/index.js",
+    "dry-run": "RUN_MODE=DRY_RUN node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "axios": "^1.13.4",
+    "borsh": "^2.0.0",
+    "bottleneck": "^2.19.5",
+    "bs58": "^6.0.0",
+    "dotenv": "^17.2.4",
+    "p-retry": "^7.1.1",
+    "pino": "^10.3.0",
+    "ws": "^8.19.0"
+  }
+}

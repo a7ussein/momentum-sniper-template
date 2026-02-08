@@ -1,0 +1,82 @@
+require('dotenv').config();
+const PumpFunScanner = require('./scanner/pumpfunScanner');
+const { makeRpcClient } = require('./utils/rpc');
+const { ValidationQueue } = require('./scanner/validationQueue');
+const { quickFilterTxMeta } = require('./scanner/quickFilters');
+const { extractMintFromTx } = require('./scanner/mintExtractor');
+const { TTLCache } = require('./utils/ttlCache');
+
+
+console.log('MOMENTUM_SNIPER runtime starting...');
+
+const rpcHttpUrl = process.env.RPC_HTTP_URL || 'https://api.mainnet-beta.solana.com';
+const rpc = makeRpcClient(rpcHttpUrl);
+
+let lastRpcAt = 0;
+async function rpcSpacing(minGapMs = 180) {
+  const now = Date.now();
+  const wait = Math.max(0, lastRpcAt + minGapMs - now);
+  if (wait) await new Promise(r => setTimeout(r, wait));
+  lastRpcAt = Date.now();
+}
+
+const queue = new ValidationQueue({ concurrency: 1 });
+const seenMints = new TTLCache({ ttlMs: 24 * 60 * 60 * 1000 }); // 24h
+setInterval(() => seenMints.cleanup(), 60_000).unref?.();
+
+const scanner = new PumpFunScanner({
+  rpcWsUrl: process.env.RPC_WS_URL || 'wss://api.mainnet-beta.solana.com'
+});
+
+let burstCount = 0;
+setInterval(() => { burstCount=0; }, 1000).unref?.();
+
+// Step A: receive signatures
+scanner.on('mint', ({ signature}) => {
+  if (burstCount++ > 3) return; //cap validation load (~5 tx/sec)
+  // Queue the heavy work (RPC fetch) so WS loop stays fast
+  queue.push(async () => {
+    const nowMs = Date.now();
+await rpcSpacing(180);
+
+// Fetch minimal tx info (retry if RPC 429s)
+let tx = null;
+for (let attempt = 0; attempt < 4; attempt++) {
+  try {
+    tx = await rpc('getTransaction', [
+      signature,
+      { commitment: 'confirmed', maxSupportedTransactionVersion: 0 }
+    ]);
+    break;
+  } catch (e) {
+    const msg = String(e?.message || e);
+    if (!msg.includes('429')) throw e;
+
+    // backoff: 250ms, 500ms, 1s, 2s
+    const backoff = 250 * (2 ** attempt);
+    await new Promise(r => setTimeout(r, backoff));
+  }
+}
+
+if (!tx) return; // still missing/failed
+
+
+    if (!tx) return; // occasionally null for very fresh sigs
+
+    // Quick filter: age check
+    const metaCheck = quickFilterTxMeta({
+      blockTime: tx.blockTime,
+      nowMs,
+      maxAgeSec: 180
+    });
+    if (!metaCheck.ok) return;
+
+    // TODO next: parse tx logs / accounts to extract the actual MINT pubkey
+    // For now, just emit a "candidate" with tx + signature.
+    
+
+    // You’ll replace this with { mint, curveProgress, initialVolume } next.
+  });
+});
+
+scanner.start();
